@@ -16,7 +16,10 @@ function addTransaction(e) {
 
   // get form values
   const description = descriptionEl.value.trim();
-  const amount = parseFloat(amountEl.value);
+  
+  // Hapus semua titik (.) sebelum diubah menjadi angka murni untuk perhitungan
+  const rawAmount = amountEl.value.replace(/\./g, ""); 
+  const amount = parseFloat(rawAmount);
 
   // TAMBAHAN: Validasi agar pengguna tidak bisa memasukkan data kosong
   if (description === "" || isNaN(amount)) {
@@ -101,6 +104,19 @@ function removeTransaction(id) {
   updateTransactionList();
   updateSummary();
 }
+
+// Format otomatis dengan pemisah ribuan saat mengetik
+amountEl.addEventListener("input", function (e) {
+  // Hapus semua karakter yang bukan angka (termasuk titik yang sudah ada)
+  let value = this.value.replace(/[^0-9]/g, "");
+
+  // Jika kolom tidak kosong, format ulang dengan standar id-ID (titik)
+  if (value !== "") {
+    this.value = parseInt(value, 10).toLocaleString("id-ID");
+  } else {
+    this.value = "";
+  }
+});
 
 // initial render
 updateTransactionList();
