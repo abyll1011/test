@@ -97,3 +97,6 @@ function removeTransaction(id) {
 // initial render
 updateTransactionList();
 updateSummary();
+
+let saldoSaatIni = balanceEl
+localStorage.setItem("saldoKeuangan", saldoSaatIni)
