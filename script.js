@@ -6,6 +6,7 @@ const transactionFormEl = document.getElementById("transaction-form");
 const descriptionEl = document.getElementById("description");
 const amountEl = document.getElementById("amount");
 
+// Mengambil data dari localStorage saat web pertama dibuka
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
 transactionFormEl.addEventListener("submit", addTransaction);
@@ -17,12 +18,19 @@ function addTransaction(e) {
   const description = descriptionEl.value.trim();
   const amount = parseFloat(amountEl.value);
 
+  // TAMBAHAN: Validasi agar pengguna tidak bisa memasukkan data kosong
+  if (description === "" || isNaN(amount)) {
+    alert("Tolong isi deskripsi dan nominal uangnya dengan benar ya!");
+    return; // Hentikan fungsi agar data kosong tidak masuk ke memori
+  }
+
   transactions.push({
     id: Date.now(),
     description,
     amount,
   });
 
+  // Simpan data ke localStorage setelah divalidasi
   localStorage.setItem("transactions", JSON.stringify(transactions));
 
   updateTransactionList();
@@ -60,7 +68,6 @@ function createTransactionElement(transaction) {
 }
 
 function updateSummary() {
-  // 100, -50, 200, -200 => 50
   const balance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 
   const income = transactions
@@ -71,16 +78,16 @@ function updateSummary() {
     .filter((transaction) => transaction.amount < 0)
     .reduce((acc, transaction) => acc + transaction.amount, 0);
 
-  // update ui => todo: fix the formatting
   balanceEl.textContent = formatCurrency(balance);
   incomeAmountEl.textContent = formatCurrency(income);
   expenseAmountEl.textContent = formatCurrency(expenses);
 }
 
 function formatCurrency(number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("id-ID", {
     style: "currency",
-    currency: "USD",
+    currency: "IDR",
+    minimumFractionDigits: 0, 
   }).format(number);
 }
 
@@ -88,7 +95,8 @@ function removeTransaction(id) {
   // filter out the one we wanted to delete
   transactions = transactions.filter((transaction) => transaction.id !== id);
 
-  localStorage.setItem("transcations", JSON.stringify(transactions));
+  // PERBAIKAN TYPO: "transcations" diubah menjadi "transactions"
+  localStorage.setItem("transactions", JSON.stringify(transactions));
 
   updateTransactionList();
   updateSummary();
@@ -97,6 +105,3 @@ function removeTransaction(id) {
 // initial render
 updateTransactionList();
 updateSummary();
-
-let saldoSaatIni = balanceEl
-localStorage.setItem("saldoKeuangan", saldoSaatIni)
